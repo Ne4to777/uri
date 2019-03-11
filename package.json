@@ -23,5 +23,8 @@
 		"copy-webpack-plugin": "^5.0.0",
 		"cpass": "^2.0.4",
 		"sp-rest-proxy": "^2.7.1"
+	},
+	"dependencies": {
+		"spx-om": "^1.0.0"
 	}
 }
