@@ -1,0 +1,4 @@
+node_modules
+.git
+gitProxySettings.txt
+config/private.json
