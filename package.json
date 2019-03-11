@@ -25,6 +25,6 @@
 		"sp-rest-proxy": "^2.7.1"
 	},
 	"dependencies": {
-		"sp-om": "^1.0.0"
+		"spx-com": "^1.0.0"
 	}
 }
