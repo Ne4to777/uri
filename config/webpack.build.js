@@ -13,8 +13,6 @@ module.exports = {
 	},
 	output: {
 		filename: config.filename,
-		path: path.resolve(__dirname, '../dist'),
-		library: config.library,
-		libraryTarget: 'umd'
+		path: path.resolve(__dirname, '../dist')
 	}
 };

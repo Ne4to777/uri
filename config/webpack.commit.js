@@ -12,8 +12,6 @@ module.exports = {
 	},
 	output: {
 		filename: config.filename,
-		path: config.path,
-		library: config.library,
-		libraryTarget: 'umd'
+		path: config.path
 	}
 };
