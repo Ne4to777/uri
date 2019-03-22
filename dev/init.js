@@ -13,20 +13,23 @@ const promisify = f => {
 
 const question = promisify(rl.question.bind(rl));
 
-fs.stat('./config/private.json', async (err, stats) => {
+fs.stat('./dev/private.json', async (err, stats) => {
 	if (err) {
+		const host = await question('Host (http://aura.dme.aero.corp): ')
 		const username = await question('Username: ');
 		const password = await question('Password: ');
-		const filename = await question('Output filename (index.js): ');
 		const path = await question('Project absolute path (f.e. "Z:/a/b"): ');
-		await fs.writeFileSync('./config/private.json', JSON.stringify({
-			siteUrl: 'http://aura.dme.aero.corp',
+		const filename = await question('Output filename (index.js): ');
+		const library = await question('Library name (myLib): ')
+		await fs.writeFileSync('./dev/private.json', JSON.stringify({
+			siteUrl: host || 'http://aura.dme.aero.corp',
 			strategy: 'OnpremiseUserCredentials',
 			domain: 'dme',
 			username: username,
 			password: new Cpass().encode(password),
 			path: path.replace(/\//g, '\\'),
 			filename: filename || 'index.js',
+			library: library || 'myLib'
 		}));
 	}
 	rl.close();

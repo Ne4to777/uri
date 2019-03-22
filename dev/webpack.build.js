@@ -1,9 +1,10 @@
 const config = require('./private.json');
+const path = require('path');
 
 module.exports = {
 	mode: 'production',
 	devtool: 'source-map',
-	entry: ['babel-polyfill', './src/index.js'],
+	entry: ['babel-polyfill', './src/modules/site.js'],
 	module: {
 		rules: [{
 			test: /\.js$/,
@@ -12,6 +13,8 @@ module.exports = {
 	},
 	output: {
 		filename: config.filename,
-		path: config.path
+		path: path.resolve(__dirname, '../publish'),
+		library: config.library,
+		libraryTarget: 'umd'
 	}
 };

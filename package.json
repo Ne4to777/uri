@@ -3,11 +3,12 @@
 	"version": "0.0.0",
 	"private": true,
 	"scripts": {
-		"dev": "node lib/init.js && concurrently --kill-others \"node lib/proxy.js\" \"webpack-dev-server --open  --config config/webpack.dev.js\"",
-		"prod": "webpack --config config/webpack.prod.js",
-		"build": "webpack --config config/webpack.build.js",
-		"commit": "webpack --config config/webpack.commit.js",
-		"copy": "webpack --config config/webpack.copy.js"
+		"dev": "node dev/init.js && concurrently --kill-others \"node dev/proxy.js\" \"webpack-dev-server --open  --config dev/webpack.dev.js\"",
+		"prod": "webpack --config dev/webpack.prod.js",
+		"build": "webpack --config dev/webpack.build.js",
+		"commit": "webpack --config dev/webpack.commit.js",
+		"copy": "webpack --config dev/webpack.copy.js",
+		"patchPublish": "npm run build && cd publish && npm version patch && npm publish"
 	},
 	"sideEffects": false,
 	"devDependencies": {
@@ -22,9 +23,9 @@
 		"concurrently": "^3.6.1",
 		"copy-webpack-plugin": "^5.0.0",
 		"cpass": "^2.0.4",
-		"sp-rest-proxy": "^2.7.1"
+		"sp-rest-proxy": "^2.7.9-beta2"
 	},
 	"dependencies": {
-		"spx-com": "^1.0.0"
+		"spx-com": "latest"
 	}
 }
