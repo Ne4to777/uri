@@ -4,7 +4,7 @@ const path = require('path');
 module.exports = {
 	mode: 'production',
 	devtool: 'source-map',
-	entry: ['babel-polyfill', './src/modules/site.js'],
+	entry: ['babel-polyfill', './src/index.js'],
 	module: {
 		rules: [{
 			test: /\.js$/,
