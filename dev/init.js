@@ -20,17 +20,19 @@ fs.stat('./dev/private.json', async (err, stats) => {
 		const password = await question('Password: ');
 		const path = await question('Project absolute path (f.e. "Z:/a/b"): ');
 		const filename = await question('Output filename (index.js): ');
-		const library = await question('Library name (myLib): ')
-		await fs.writeFileSync('./dev/private.json', JSON.stringify({
-			siteUrl: host || 'http://aura.dme.aero.corp',
-			strategy: 'OnpremiseUserCredentials',
-			domain: 'dme',
-			username: username,
-			password: new Cpass().encode(password),
-			path: path.replace(/\//g, '\\'),
-			filename: filename || 'index.js',
-			library: library || 'myLib'
-		}));
+		const library = await question('Library name (myLib): ');
+		if (username && password) {
+			await fs.writeFileSync('./dev/private.json', JSON.stringify({
+				siteUrl: host || 'http://aura.dme.aero.corp',
+				strategy: 'OnpremiseUserCredentials',
+				domain: 'dme',
+				username: username,
+				password: new Cpass().encode(password),
+				path: path.replace(/\//g, '\\'),
+				filename: filename || 'index.js',
+				library: library || 'myLib'
+			}));
+		}
 	}
 	rl.close();
 })
