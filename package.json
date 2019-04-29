@@ -26,6 +26,6 @@
 		"sp-rest-proxy": "^2.7.9-beta2"
 	},
 	"dependencies": {
-		"spx-com": "latest"
+		"spx-com": "^1.0.22"
 	}
 }
