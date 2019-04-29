@@ -15,24 +15,16 @@ const question = promisify(rl.question.bind(rl));
 
 fs.stat('./dev/private.json', async (err, stats) => {
 	if (err) {
-		const host = await question('Host (http://aura.dme.aero.corp): ')
-		const username = await question('Username: ');
-		const password = await question('Password: ');
-		const path = await question('Project absolute path (f.e. "Z:/a/b"): ');
-		const filename = await question('Output filename (index.js): ');
-		const library = await question('Library name (myLib): ');
-		if (username && password) {
-			await fs.writeFileSync('./dev/private.json', JSON.stringify({
-				siteUrl: host || 'http://aura.dme.aero.corp',
-				strategy: 'OnpremiseUserCredentials',
-				domain: 'dme',
-				username: username,
-				password: new Cpass().encode(password),
-				path: path.replace(/\//g, '\\'),
-				filename: filename || 'index.js',
-				library: library || 'myLib'
-			}));
-		}
+		await fs.writeFileSync('./dev/private.json', JSON.stringify({
+			siteUrl: 'http://aura.dme.aero.corp',
+			strategy: 'OnpremiseUserCredentials',
+			domain: 'dme',
+			username: await question('Username: '),
+			password: new Cpass().encode(await question('Password: ')),
+			path: (await question('Project absolute path (f.e. "Z:/a/b"): ')).replace(/\//g, '\\'),
+			filename: 'index.js',
+			library: (await question('Library name (myLib): ')) || 'myLib'
+		}));
 	}
 	rl.close();
 })
