@@ -1,10 +1,18 @@
 import test from './../test';
 import parser from './modules/parser';
+import stringifier from './modules/stringifier';
 
 
+const uri = str => {
+  const parsedData = parser(str);
+  console.log(parsedData);
+  const stringifiedData = stringifier(parsedData);
+  console.log(stringifiedData);
 
+  console.log(str === stringifier(parser(str)));
+}
 
-// console.log(parseQueryString('InitialTabId=Ribbon%2EList&VisibilityContext=WSSListAndLibrary'));
+uri(`http://username:password@www.example.com:123/folder/fileTitle.html?name=alex&age=20#hi`);
 
 // const addQueryKey = function (key) {
 //   this.query[key] = '';
@@ -73,4 +81,4 @@ import parser from './modules/parser';
 // };
 
 
-test();
+// test();

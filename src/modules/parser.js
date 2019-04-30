@@ -91,10 +91,8 @@ const parseSchemeAuthorityAndPathString = str => {
         }
         : parseAuthorityString(str)
     }
-
   }
 }
-
 
 const parseQueryString = (queryString = '') => {
   const querySplits = queryString.split('&');
@@ -120,6 +118,7 @@ const parseQueryAndFragmentString = str => {
 }
 
 export default str => {
+  if (!str) return {};
   const authorityAndPathSplits = str.split('?');
   const authorityAndPath = authorityAndPathSplits[0];
   if (authorityAndPathSplits.length === 1) {

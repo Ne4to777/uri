@@ -55,6 +55,12 @@ export default _ => {
     (parser(`${scheme}://${host}/${folder}/${fileTitle}.${fileExt}?name=${query.name}&age=${query.age}`));
   assertPropsEqual(['scheme', 'host', 'fileName', 'fileTitle', 'fileExt', 'query'])
     (parser(`${scheme}://${host}/${fileTitle}.${fileExt}?name=${query.name}&age=${query.age}`));
+  assertPropsEqual(['host', 'fileName', 'fileTitle', 'fileExt', 'query'])
+    (parser(`${host}/${fileTitle}.${fileExt}?name=${query.name}&age=${query.age}`));
   assertPropsEqual(['scheme', 'host', 'fileName', 'fileTitle', 'fileExt'])
     (parser(`${scheme}://${host}/${fileTitle}.${fileExt}`));
+  assertPropsEqual(['host', 'fileName', 'fileTitle', 'fileExt'])
+    (parser(`${host}/${fileTitle}.${fileExt}`));
+  assertPropsEqual([])
+    (parser());
 }
