@@ -1,4 +1,4 @@
-import stringifier from '../src/modules/uri/stringifier.js';
+import stringifier from './../src/modules/stringifier';
 const parsed = {
   scheme: 'http',
   username: 'username',

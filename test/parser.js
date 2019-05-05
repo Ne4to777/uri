@@ -1,7 +1,6 @@
 import {
-  parseFullString,
-  parseQueryString
-} from '../src/modules/uri/parser';
+  parseFullString
+} from './../src/modules/parser';
 const scheme = 'http';
 const username = 'username';
 const password = 'password';

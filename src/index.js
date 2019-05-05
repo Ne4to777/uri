@@ -1,126 +1,139 @@
+import {
+  parseFullString,
+  parseQueryString,
+  parsePathString,
+  parseFileNameString
+} from './modules/parser';
+import stringifier from './modules/stringifier';
+
 // import test from './../test';
-import Uri from './modules/uri/';
-const identity = _ => _;
 
-const fireEvent = event => async isAsync => isAsync ?
-  setTimeout(_ => event()) :
-  await event();
-
-
-export default (opts = {}) => {
-  const {
-    onstatechange = identity
-  } = opts;
-  const fireOnStateChange = fireEvent(onstatechange);
-  const uri = new Uri();
-  return {
-    set folder(str) {
-      uri.folder = str;
-    },
-    get folder() {
-      return uri.folder;
-    },
-    set fileName(str) {
-      uri.fileName = str;
-    },
-    get fileName() {
-      return uri.fileName;
-    },
-    set path(str) {
-      uri.path = str;
-    },
-    get path() {
-      return uri.path;
-    },
-    set query(str) {
-      uri.query = str;
-    },
-    get query() {
-      return uri.query;
-    },
-    set fragment(str) {
-      uri.fragment = str;
-    },
-    get fragment() {
-      return uri.fragment;
-    },
-    getQueryKey: uri.getQueryKey.bind(uri),
-    setQueryKey: uri.setQueryKey.bind(uri),
-    getQueryKeys: uri.getQueryKeys.bind(uri),
-    setQueryKeys: uri.setQueryKeys.bind(uri),
-    deleteQueryKey: uri.deleteQueryKey.bind(uri),
-    deleteQueryKeys: uri.deleteQueryKeys.bind(uri),
-    clearQuery: uri.clearQuery.bind(uri),
-    getRelativeURL: function () {
-      return this.toString({
-        relativeMode: 'root'
-      })
-    },
-    setRelativeURL: function (str) {
-      const localUri = new Uri(str);
-      this.path = localUri.path;
-      this.query = Object.assign({}, localUri.query);
-      this.fragment = localUri.fragment;
-    },
-    toString: uri.toString.bind(uri),
-    push: async (opts = {}) => {
-      const {
-        state,
-        title,
-        isAsync
-      } = opts;
-      await fireOnStateChange(isAsync);
-      history.pushState(state, title, uri.toString({
-        relativeMode: 'root'
-      }));
-    },
-    pushFolder: function (str, opts) {
-      this.folder = str;
-      this.push(opts)
-    },
-    pushFileName: function (str, opts) {
-      this.fileName = str;
-      this.push(opts)
-    },
-    pushPath: function (str, opts) {
-      this.path = str;
-      this.push(opts)
-    },
-    pushQuery: function (obj, opts) {
-      this.query = obj;
-      this.push(opts)
-    },
-    pushQueryKey: function (key, value, opts) {
-      this.setQueryKey(key, value);
-      this.push(opts)
-    },
-    pushQueryKeys: function (obj, opts) {
-      this.setQueryKeys(obj, value);
-      this.push(opts)
-    },
-    pushFragment: function (str, opts) {
-      this.fragment = str;
-      this.push(opts)
-    },
-    pushURL: function (str, opts) {
-      this.setRelativeURL(str, opts);
-      this.push(opts)
-    },
-    getState: _ => history.state,
-    getLength: _ => history.length,
-    forward: async (opts = {}) => {
-      await fireOnStateChange(opts.isAsync);
-      history.forward()
-    },
-    back: async (opts = {}) => {
-      await fireOnStateChange(opts.isAsync);
-      history.back()
-    },
-    go: async (i, opts = {}) => {
-      await fireOnStateChange(opts.isAsync);
-      history.go(i);
+export default class Uri {
+  constructor(str = window.location.href) {
+    this._data = parseFullString(str);
+    !this._data.query && (this._data.query = {})
+  }
+  get scheme() {
+    return this._data.scheme;
+  }
+  set scheme(str = '') {
+    this._data.scheme = str;
+  }
+  get username() {
+    return this._data.username;
+  }
+  set username(str = '') {
+    this._data.username = str;
+  }
+  get password() {
+    return this._data.password;
+  }
+  set password(str = '') {
+    this._data.password = str;
+  }
+  get host() {
+    return this._data.host;
+  }
+  set host(str = '') {
+    this._data.host = str;
+  }
+  get port() {
+    return this._data.port;
+  }
+  set port(str = '') {
+    this._data.port = str;
+  }
+  get folder() {
+    return this._data.folder;
+  }
+  set folder(str = '') {
+    this._data.folder = str;
+  }
+  get fileTitle() {
+    return this._data.fileTitle;
+  }
+  set fileTitle(str = '') {
+    this._data.fileTitle = str;
+  }
+  get fileExt() {
+    return this._data.fileExt;
+  }
+  set fileExt(str = '') {
+    this._data.fileExt = str;
+  }
+  get fileName() {
+    return this.fileTitle && this.fileExt ? `${this.fileTitle}.${this.fileExt}` : void 0;
+  }
+  set fileName(str = '') {
+    const {
+      fileTitle,
+      fileExt
+    } = parseFileNameString(str);
+    this.fileExt = fileExt;
+    this.fileTitle = fileTitle;
+  }
+  get path() {
+    if (this.folder) {
+      return this.fileName ? `${this.folder}/${this.fileName}` : this.folder
+    } else if (this.fileName) {
+      return this.fileName
     }
+  }
+  set path(str = '') {
+    const {
+      folder,
+      fileName
+    } = parsePathString(str);
+
+    this.folder = folder;
+    this.fileName = fileName;
+  }
+  get query() {
+    return this._data.query;
+  }
+  set query(obj = {}) {
+    this._data.query = typeof obj === 'string' ? parseQueryString(obj) : obj;
+  }
+  getQueryKey(str) {
+    return this.query[str];
+  }
+  addQueryKey(str) {
+    return this.query[str] = void 0;
+  }
+  setQueryKey(str, value) {
+    this.query[str] = value;
+  }
+  getQueryKeys(array = []) {
+    return array.reduce((acc, el) => {
+      acc[el] = this.query[el];
+      return acc
+    }, {});
+  }
+  setQueryKeys(obj = {}) {
+    for (const key in obj) {
+      this.query[key] = obj[key];
+    }
+  }
+  deleteQueryKey(str) {
+    delete this.query[str]
+  }
+  deleteQueryKeys(strings = []) {
+    strings.map(el => {
+      delete this.query[el]
+    })
+  }
+  clearQuery() {
+    this.query = {}
+  }
+  get fragment() {
+    return this._data.fragment;
+  }
+  set fragment(str = '') {
+    this._data.fragment = str;
+  }
+  toString(opts) {
+    return stringifier(this._data, opts)
   }
 }
 
-// test();
+// test()
