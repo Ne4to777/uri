@@ -7,7 +7,7 @@ const proxyPathConfig = {
 module.exports = {
 	mode: 'development',
 	devtool: 'inline-source-map',
-	entry: [/* 'babel-polyfill',  */'./src/index.js'],
+	entry: [ /* 'babel-polyfill',  */ './src/index.js'],
 	// module: {
 	// 	rules: [{
 	// 		test: /\.js$/,

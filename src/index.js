@@ -1,84 +1,126 @@
-import test from './../test';
-import parser from './modules/parser';
-import stringifier from './modules/stringifier';
+// import test from './../test';
+import Uri from './modules/uri/';
+const identity = _ => _;
+
+const fireEvent = event => async isAsync => isAsync ?
+  setTimeout(_ => event()) :
+  await event();
 
 
-const uri = str => {
-  const parsedData = parser(str);
-  console.log(parsedData);
-  const stringifiedData = stringifier(parsedData);
-  console.log(stringifiedData);
-
-  console.log(str === stringifier(parser(str)));
+export default (opts = {}) => {
+  const {
+    onstatechange = identity
+  } = opts;
+  const fireOnStateChange = fireEvent(onstatechange);
+  const uri = new Uri();
+  return {
+    set folder(str) {
+      uri.folder = str;
+    },
+    get folder() {
+      return uri.folder;
+    },
+    set fileName(str) {
+      uri.fileName = str;
+    },
+    get fileName() {
+      return uri.fileName;
+    },
+    set path(str) {
+      uri.path = str;
+    },
+    get path() {
+      return uri.path;
+    },
+    set query(str) {
+      uri.query = str;
+    },
+    get query() {
+      return uri.query;
+    },
+    set fragment(str) {
+      uri.fragment = str;
+    },
+    get fragment() {
+      return uri.fragment;
+    },
+    getQueryKey: uri.getQueryKey.bind(uri),
+    setQueryKey: uri.setQueryKey.bind(uri),
+    getQueryKeys: uri.getQueryKeys.bind(uri),
+    setQueryKeys: uri.setQueryKeys.bind(uri),
+    deleteQueryKey: uri.deleteQueryKey.bind(uri),
+    deleteQueryKeys: uri.deleteQueryKeys.bind(uri),
+    clearQuery: uri.clearQuery.bind(uri),
+    getRelativeURL: function () {
+      return this.toString({
+        relativeMode: 'root'
+      })
+    },
+    setRelativeURL: function (str) {
+      const localUri = new Uri(str);
+      this.path = localUri.path;
+      this.query = Object.assign({}, localUri.query);
+      this.fragment = localUri.fragment;
+    },
+    toString: uri.toString.bind(uri),
+    push: async (opts = {}) => {
+      const {
+        state,
+        title,
+        isAsync
+      } = opts;
+      await fireOnStateChange(isAsync);
+      history.pushState(state, title, uri.toString({
+        relativeMode: 'root'
+      }));
+    },
+    pushFolder: function (str, opts) {
+      this.folder = str;
+      this.push(opts)
+    },
+    pushFileName: function (str, opts) {
+      this.fileName = str;
+      this.push(opts)
+    },
+    pushPath: function (str, opts) {
+      this.path = str;
+      this.push(opts)
+    },
+    pushQuery: function (obj, opts) {
+      this.query = obj;
+      this.push(opts)
+    },
+    pushQueryKey: function (key, value, opts) {
+      this.setQueryKey(key, value);
+      this.push(opts)
+    },
+    pushQueryKeys: function (obj, opts) {
+      this.setQueryKeys(obj, value);
+      this.push(opts)
+    },
+    pushFragment: function (str, opts) {
+      this.fragment = str;
+      this.push(opts)
+    },
+    pushURL: function (str, opts) {
+      this.setRelativeURL(str, opts);
+      this.push(opts)
+    },
+    getState: _ => history.state,
+    getLength: _ => history.length,
+    forward: async (opts = {}) => {
+      await fireOnStateChange(opts.isAsync);
+      history.forward()
+    },
+    back: async (opts = {}) => {
+      await fireOnStateChange(opts.isAsync);
+      history.back()
+    },
+    go: async (i, opts = {}) => {
+      await fireOnStateChange(opts.isAsync);
+      history.go(i);
+    }
+  }
 }
-
-uri(`http://username:password@www.example.com:123/folder/fileTitle.html?name=alex&age=20#hi`);
-
-// const addQueryKey = function (key) {
-//   this.query[key] = '';
-// }
-
-// const deleteQueryKey = function (key, isHistoryReplaced) {
-//   if (this.setQueryKey(key)) {
-//     this.changeHistory(isHistoryReplaced);
-//   }
-// }
-
-// const refreshParameters = function () {
-//   var query = [];
-//   for (var param in this.query) {
-//     query.push(param + '=' + encodeURIComponent(this.query[param]));
-//   }
-//   this.queryString = query.join('&');
-//   this.fullQueryString = this.queryString + (this.fragment ? '#' + this.fragment : '');
-// }
-
-// const setQueryKey = function (key, value) {
-//   var isSet;
-//   if (value === void 0) {
-//     if (this.query.hasOwnProperty(key)) {
-//       delete this.query[key];
-//       isSet = true
-//     } else {
-//       isSet = false
-//     }
-//   } else {
-//     !this.query.hasOwnProperty(key) && this.addQueryKey(key);
-//     this.query[key] = value;
-//     isSet = true
-//   }
-//   this.refreshParameters();
-//   return isSet;
-// }
-
-// const setQueryKeys = function (parameters) {
-//   for (var key in parameters) {
-//     this.setQueryKey(key, parameters[key])
-//   }
-// }
-
-// const replaceQuery = function (queryString, isHistoryReplaced) {
-//   this.parseQuery(queryString);
-//   this.changeHistory(isHistoryReplaced);
-// }
-
-// const replaceQueryKey = function (key, value, isHistoryReplaced) {
-//   this.setQueryKey(key, value);
-//   this.changeHistory(isHistoryReplaced);
-// }
-
-// const replaceQueryKeys = function (parameters, isHistoryReplaced) {
-//   this.setQueryKeys(parameters);
-//   this.changeHistory(isHistoryReplaced);
-// }
-
-// const clearQuery = function () {
-//   this.replaceQuery();
-// };
-
-// const changeHistory = function (isHistoryReplaced) {
-//   history[isHistoryReplaced ? 'replaceState' : 'pushState'](null, null, this.fullQueryString ? '?' + this.fullQueryString : this.fileName);
-// };
-
 
 // test();
